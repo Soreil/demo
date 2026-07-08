@@ -1,5 +1,6 @@
 package com.lox;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.lox.TokenType.*;
@@ -15,12 +16,31 @@ public class Parser {
         this.tokens = tokens;
     }
 
-    Expr Parse() {
-        try {
-            return ternary();
-        } catch (ParseError error) {
-            return null;
+    List<Stmt> Parse() {
+        List<Stmt> statements = new ArrayList<>();
+        while (!isAtEnd()) {
+            statements.add(statement());
         }
+
+        return statements;
+    }
+
+    private Stmt statement() {
+        if (match(PRINT))
+            return printStatement();
+        return expressionStatement();
+    }
+
+    private Stmt printStatement() {
+        Expr value = expression();
+        consume(SEMICOLON, "Expect ';' after value.");
+        return new Stmt.Print(value);
+    }
+
+    private Stmt expressionStatement() {
+        Expr expr = expression();
+        consume(SEMICOLON, "Expect ';' after expression.");
+        return new Stmt.Expression(expr);
     }
 
     private Expr expression() {
@@ -41,18 +61,16 @@ public class Parser {
 
     private Expr ternary() {
         Expr expr = expression();
-        if (match(QUESTION))
-        {
+        if (match(QUESTION)) {
             Expr trueCase = expression();
-            if (match(COLON))
-            {
+            if (match(COLON)) {
                 Expr falseCase = expression();
                 return new Expr.Ternary(expr, trueCase, falseCase);
             } else {
                 throw error(peek(), "Missing false portion for ternary statement");
             }
         }
-        
+
         return expr;
     }
 
@@ -136,7 +154,7 @@ public class Parser {
             throw error(peek(), "Unary plus is not a legal character");
         }
         if (match(SLASH) || match(STAR) || match(QUESTION) || match(COLON)
-        || match(AND) || match(OR)) {
+                || match(AND) || match(OR)) {
             throw error(peek(), "Missing lefthand operand");
         }
 

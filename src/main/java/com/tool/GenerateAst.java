@@ -18,24 +18,13 @@ public class GenerateAst {
         "Grouping : Expr expression",
         "Literal  : Object value",
         "Unary    : Token operator, Expr right"));
-  }
-/*  static class Ternary extends Expr {
-    Ternary(Expr left, Expr truth, Expr falsehood) {
-        this.left = left;
-        this.truth = truth;
-        this.falsehood = falsehood;
-    }
 
-    final Expr left;
-    final Expr truth;
-    final Expr falsehood;
-
-    @Override
-    <R> R accept(Visitor<R> visitor) {
-        return visitor.VisitTernary(this);
-    }
+        defineAst(outputDir, "Stmt", Arrays.asList(
+          "Expression : Expr expression",
+          "Print  : Expr expression"
+        ));
   }
- */
+
   private static void defineAst(
       String outputDir, String baseName, List<String> types)
       throws IOException {
