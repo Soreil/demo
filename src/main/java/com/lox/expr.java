@@ -5,10 +5,16 @@ import java.util.List;
 abstract class Expr {
   interface Visitor<R> {
     R visitBinaryExpr(Binary expr);
+
     R visitGroupingExpr(Grouping expr);
+
     R visitLiteralExpr(Literal expr);
+
     R visitUnaryExpr(Unary expr);
+
+    R VisitTernary(Ternary expr);
   }
+
   static class Binary extends Expr {
     Binary(Expr left, Token operator, Expr right) {
       this.left = left;
@@ -16,15 +22,34 @@ abstract class Expr {
       this.right = right;
     }
 
+    final Expr left;
+    final Token operator;
+    final Expr right;
+
     @Override
     <R> R accept(Visitor<R> visitor) {
       return visitor.visitBinaryExpr(this);
     }
 
-    final Expr left;
-    final Token operator;
-    final Expr right;
   }
+
+  static class Ternary extends Expr {
+    Ternary(Expr left, Expr truth, Expr falsehood) {
+        this.left = left;
+        this.truth = truth;
+        this.falsehood = falsehood;
+    }
+
+    final Expr left;
+    final Expr truth;
+    final Expr falsehood;
+
+    @Override
+    <R> R accept(Visitor<R> visitor) {
+        return visitor.VisitTernary(this);
+    }
+  }
+
   static class Grouping extends Expr {
     Grouping(Expr expression) {
       this.expression = expression;
@@ -37,6 +62,7 @@ abstract class Expr {
 
     final Expr expression;
   }
+
   static class Literal extends Expr {
     Literal(Object value) {
       this.value = value;
@@ -49,6 +75,7 @@ abstract class Expr {
 
     final Object value;
   }
+
   static class Unary extends Expr {
     Unary(Token operator, Expr right) {
       this.operator = operator;

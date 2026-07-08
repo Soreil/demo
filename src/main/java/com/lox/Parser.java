@@ -17,7 +17,7 @@ public class Parser {
 
     Expr Parse() {
         try {
-            return expression();
+            return ternary();
         } catch (ParseError error) {
             return null;
         }
@@ -36,6 +36,23 @@ public class Parser {
             expr = new Expr.Binary(expr, operator, right);
         }
 
+        return expr;
+    }
+
+    private Expr ternary() {
+        Expr expr = expression();
+        if (match(QUESTION))
+        {
+            Expr trueCase = expression();
+            if (match(COLON))
+            {
+                Expr falseCase = expression();
+                return new Expr.Ternary(expr, trueCase, falseCase);
+            } else {
+                throw error(peek(), "Missing false portion for ternary statement");
+            }
+        }
+        
         return expr;
     }
 
@@ -113,6 +130,14 @@ public class Parser {
             Expr expr = expression();
             consume(RIGHT_PAREN, "Expect ')' after expression.");
             return new Expr.Grouping(expr);
+        }
+
+        if (match(PLUS)) {
+            throw error(peek(), "Unary plus is not a legal character");
+        }
+        if (match(SLASH) || match(STAR) || match(QUESTION) || match(COLON)
+        || match(AND) || match(OR)) {
+            throw error(peek(), "Missing lefthand operand");
         }
 
         throw error(peek(), "Expect expression.");
