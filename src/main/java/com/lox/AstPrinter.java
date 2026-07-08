@@ -44,7 +44,7 @@ class AstPrinter implements Expr.Visitor<String> {
   }
 
   @Override
-  public String VisitTernary(Ternary expr) {
+  public String visitTernaryExpr(Ternary expr) {
     return parenthesize("?:",expr.left, expr.truth,expr.falsehood);
   }
 }

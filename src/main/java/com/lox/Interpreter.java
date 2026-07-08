@@ -150,7 +150,7 @@ public class Interpreter implements Expr.Visitor<Object> {
     }
 
     @Override
-    public Object VisitTernary(Ternary expr) {
+    public Object visitTernaryExpr(Ternary expr) {
         Object conditional = evaluate(expr.left);
         if (isTruthy(conditional)) {
             return evaluate(expr.truth);
