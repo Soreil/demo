@@ -5,7 +5,7 @@ enum TokenType {
   LEFT_PAREN, RIGHT_PAREN, LEFT_BRACE, RIGHT_BRACE,
   COMMA, DOT, MINUS, PLUS, SEMICOLON, SLASH, STAR,
   
-  //Ternary operator characters
+  //Ternary operator characters.
   QUESTION, COLON,
 
   // One or two character tokens.
@@ -14,6 +14,8 @@ enum TokenType {
   GREATER, GREATER_EQUAL,
   LESS, LESS_EQUAL,
 
+  //Looping.
+  BREAK,
 
   // Literals.
   IDENTIFIER, STRING, NUMBER,

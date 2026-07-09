@@ -14,6 +14,8 @@ public class Parser {
     private final List<Token> tokens;
     private int current = 0;
 
+    private Stmt currentLoop = null;
+
     public Parser(List<Token> tokens) {
         this.tokens = tokens;
     }
@@ -62,7 +64,23 @@ public class Parser {
             return whileStatement();
         if (match(LEFT_BRACE))
             return new Stmt.Block(block());
+        if (match(BREAK))
+            return breakStatement();
         return expressionStatement();
+    }
+
+    private Stmt breakStatement() {
+        consume(SEMICOLON, "Expect ';'' after 'break'.");
+
+        if (currentLoop == null) {
+            throw error(peek(), "Expect outer loop.");
+        }
+
+        if (!(currentLoop instanceof Stmt.While)) {
+            throw error(peek(), "Invalid loop type.");
+        }
+
+        return new Stmt.Break(currentLoop);
     }
 
     private Stmt forStatement() {

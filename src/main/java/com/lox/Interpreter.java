@@ -11,6 +11,7 @@ import com.lox.Expr.Ternary;
 import com.lox.Expr.Unary;
 import com.lox.Expr.Variable;
 import com.lox.Stmt.Block;
+import com.lox.Stmt.Break;
 import com.lox.Stmt.Expression;
 import com.lox.Stmt.If;
 import com.lox.Stmt.Print;
@@ -267,6 +268,12 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
         while (isTruthy(evaluate(stmt.condition))) {
             execute(stmt.body);
         }
+        return null;
+    }
+
+    @Override
+    public Void visitBreakStmt(Break stmt) {
+        execute(stmt);
         return null;
     }
 }
