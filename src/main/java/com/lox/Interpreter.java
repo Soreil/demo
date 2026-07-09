@@ -6,11 +6,13 @@ import com.lox.Expr.Assign;
 import com.lox.Expr.Binary;
 import com.lox.Expr.Grouping;
 import com.lox.Expr.Literal;
+import com.lox.Expr.Logical;
 import com.lox.Expr.Ternary;
 import com.lox.Expr.Unary;
 import com.lox.Expr.Variable;
 import com.lox.Stmt.Block;
 import com.lox.Stmt.Expression;
+import com.lox.Stmt.If;
 import com.lox.Stmt.Print;
 import com.lox.Stmt.Var;
 
@@ -234,5 +236,37 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
             this.environment = previous;
         }
 
+    }
+
+    @Override
+    public Void visitIfStmt(If stmt) {
+        if (isTruthy(evaluate(stmt.condition))) {
+            execute(stmt.thenBranch);
+        } else if (stmt.elseBranch != null) {
+            execute(stmt.elseBranch);
+        }
+        return null;
+    }
+
+    @Override
+    public Object visitLogicalExpr(Logical expr) {
+        Object left = evaluate(expr.left);
+
+        if (expr.operator.type == TokenType.OR) {
+            if (isTruthy(left))
+                return left;
+        } else {
+            if (!isTruthy(left))
+                return left;
+        }
+        return evaluate(expr.right);
+    }
+
+    @Override
+    public Void visitWhileStmt(Stmt.While stmt) {
+        while (isTruthy(evaluate(stmt.condition))) {
+            execute(stmt.body);
+        }
+        return null;
     }
 }
