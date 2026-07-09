@@ -84,7 +84,7 @@ public class Parser {
     }
 
     private Expr ternary() {
-        Expr expr = equality();
+        Expr expr = assignment();
         if (match(QUESTION)) {
             Expr trueCase = expression();
             if (match(COLON)) {
@@ -93,6 +93,24 @@ public class Parser {
             } else {
                 throw error(peek(), "Missing false portion for ternary statement");
             }
+        }
+
+        return expr;
+    }
+
+    private Expr assignment() {
+        Expr expr = equality();
+
+        if (match(EQUAL)) {
+            Token equals = previous();
+            Expr value = assignment();
+
+            if (expr instanceof Expr.Variable) {
+                Token name = ((Expr.Variable) expr).name;
+                return new Expr.Assign(name, value);
+            }
+
+            error(equals, "Invalid assignment target.");
         }
 
         return expr;
