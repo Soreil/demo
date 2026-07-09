@@ -1,6 +1,7 @@
 package com.lox;
 
 import com.lox.Expr.Ternary;
+import com.lox.Expr.Variable;
 
 class AstPrinter implements Expr.Visitor<String> {
   String print(Expr expr) {
@@ -46,5 +47,11 @@ class AstPrinter implements Expr.Visitor<String> {
   @Override
   public String visitTernaryExpr(Ternary expr) {
     return parenthesize("?:",expr.left, expr.truth,expr.falsehood);
+  }
+
+  @Override
+  public String visitVariableExpr(Variable expr) {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'visitVariableExpr'");
   }
 }
