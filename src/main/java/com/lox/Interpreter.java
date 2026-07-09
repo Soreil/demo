@@ -180,6 +180,10 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
         return null;
     }
 
+    public Object visitExpressionStmtPrinting(Expression stmt) {
+        return evaluate(stmt.expression);
+    }
+
     @Override
     public Void visitPrintStmt(Print stmt) {
         Object value = evaluate(stmt.expression);
@@ -192,9 +196,11 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
         Object value = null;
         if (stmt.initializer != null) {
             value = evaluate(stmt.initializer);
+            environment.defineInitialized(stmt.name.lexeme, value);
+        } else {
+            environment.defineUninitialized(stmt.name.lexeme);
         }
 
-        environment.define(stmt.name.lexeme, value);
         return null;
     }
 
@@ -206,7 +212,7 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
     @Override
     public Object visitAssignExpr(Assign expr) {
         Object value = evaluate(expr.value);
-        environment.assign(expr.name,value);
+        environment.assign(expr.name, value);
         return value;
     }
 
@@ -227,6 +233,6 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
         } finally {
             this.environment = previous;
         }
-        
+
     }
 }

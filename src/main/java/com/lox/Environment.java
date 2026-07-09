@@ -1,6 +1,7 @@
 package com.lox;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 
 public class Environment {
@@ -15,9 +16,15 @@ public class Environment {
     }
 
     private final Map<String, Object> values = new HashMap<>();
+    private final HashSet<String> uninitializedKeys = new HashSet<>();
 
-    void define(String name, Object value) {
+    void defineInitialized(String name, Object value) {
+        uninitializedKeys.remove(name);
         values.put(name, value);
+    }
+
+    void defineUninitialized(String name) {
+        uninitializedKeys.add(name);
     }
 
     Object get(Token name) {
@@ -28,11 +35,19 @@ public class Environment {
         if (enclosing != null)
             return enclosing.get(name);
 
+        if (uninitializedKeys.contains(name.lexeme)) {
+            throw new RuntimeError(name, "Uninitialized variable '" + name.lexeme + "'.");
+        }
+
         throw new RuntimeError(name, "Undefined variable '" + name.lexeme + "'.");
     }
 
     public void assign(Token name, Object value) {
         if (values.containsKey(name.lexeme)) {
+            values.put(name.lexeme, value);
+            return;
+        } else if (uninitializedKeys.contains(name.lexeme)) {
+            uninitializedKeys.remove(name.lexeme);
             values.put(name.lexeme, value);
             return;
         }

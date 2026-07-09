@@ -8,6 +8,8 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
 
+import com.lox.Stmt.Expression;
+
 public class Lox {
   private static final Interpreter interpreter = new Interpreter();
 
@@ -60,6 +62,15 @@ public class Lox {
 
     if (hadError)
       return;
+
+    if (statements.size() == 1) {
+      var stmt = statements.get(0);
+      if (stmt instanceof Expression) {
+        var expr = (Expression) stmt;
+        var res = interpreter.visitExpressionStmtPrinting(expr);
+        System.out.println(res);
+      }
+    }
 
     interpreter.interpret(statements);
   }
