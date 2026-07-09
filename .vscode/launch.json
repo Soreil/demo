@@ -33,6 +33,14 @@
         },
         {
             "type": "java",
+            "name": "Lox scratch",
+            "request": "launch",
+            "mainClass": "com.lox.Lox",
+            "projectName": "demo",
+            "args": "${workspaceFolder}/samples/scratch.lox"
+        },
+        {
+            "type": "java",
             "name": "GenerateAst",
             "request": "launch",
             "mainClass": "com.tool.GenerateAst",
