@@ -59,4 +59,8 @@ public class Environment {
 
         throw new RuntimeError(name, "Undefined variable '" + name.lexeme + "'.");
     }
+
+    public void define(String lexeme, Object object) {
+        values.put(lexeme, object);
+    }
 }
