@@ -63,6 +63,13 @@ public class Lox {
     if (hadError)
       return;
 
+    Resolver resolver = new Resolver(interpreter);
+    resolver.resolve(statements);
+    
+    // Stop if there was a resolution error.
+    if (hadError)
+      return;
+
     if (statements.size() == 1) {
       var stmt = statements.get(0);
       if (stmt instanceof Expression) {
