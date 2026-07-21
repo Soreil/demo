@@ -114,6 +114,7 @@ class Scanner {
                     // A comment goes until the end of the line.
                     while (peek() != '\n' && !isAtEnd())
                         advance();
+                    break;
                 }
                 if (match('*')) {
                     blockComment();

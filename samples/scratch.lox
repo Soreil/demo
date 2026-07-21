@@ -4,7 +4,9 @@ class Doughnut {
   }
 }
 
-class BostonCream < Doughnut {
+
+
+class BostonCream < Doughnut { //A random comment
   cook() {
     super.cook();
     print "Pipe full of custard and coat with chocolate.";
