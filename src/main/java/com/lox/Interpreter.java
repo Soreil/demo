@@ -33,7 +33,7 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
 
             @Override
             public Object call(Interpreter interpreter,
-                    List<Object> arguments) {
+                               List<Object> arguments) {
                 return (double) System.currentTimeMillis() / 1000.0;
             }
 
@@ -180,7 +180,7 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
     }
 
     private void checkNumberOperands(Token operator,
-            Object left, Object right) {
+                                     Object left, Object right) {
         if (left instanceof Double && right instanceof Double)
             return;
 
@@ -236,6 +236,11 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
             value = evaluate(stmt.value);
 
         throw new com.lox.Return(value);
+    }
+
+    @Override
+    public Void visitBreakStmt(Stmt.Break stmt) {
+        throw new com.lox.Break();
     }
 
     @Override
@@ -393,8 +398,12 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
 
     @Override
     public Void visitWhileStmt(Stmt.While stmt) {
-        while (isTruthy(evaluate(stmt.condition))) {
-            execute(stmt.body);
+        try {
+            while (isTruthy(evaluate(stmt.condition))) {
+                execute(stmt.body);
+            }
+        } catch (com.lox.Break e) {
+            return null;
         }
         return null;
     }

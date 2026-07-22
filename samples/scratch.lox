@@ -1,6 +1,17 @@
 class Doughnut {
   cook() {
-    print "Fry until golden brown.";
+  var i = 0;
+
+      while( i < 5) {
+        if (i ==3 ) {
+            print "breaking";
+            break;
+        }
+        print i;
+        i = i + 1;
+      }
+
+       print "Fry until golden brown.";
   }
 }
 

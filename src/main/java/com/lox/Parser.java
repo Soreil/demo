@@ -86,6 +86,8 @@ public class Parser {
             return printStatement();
         if (match(RETURN))
             return returnStatement();
+        if (match(BREAK))
+            return breakStatement();
 
         if (match(WHILE))
             return whileStatement();
@@ -175,6 +177,12 @@ public class Parser {
         return new Stmt.Print(value);
     }
 
+    private Stmt breakStatement() {
+        Token keyword = previous();
+        consume(SEMICOLON, "Expect ';' after break.");
+        return new Stmt.Break(keyword);
+    }
+
     private Stmt returnStatement() {
         Token keyword = previous();
         Expr value = null;
@@ -258,8 +266,7 @@ public class Parser {
             if (expr instanceof Expr.Variable) {
                 Token name = ((Expr.Variable) expr).name;
                 return new Expr.Assign(name, value);
-            } else if (expr instanceof Expr.Get) {
-                Expr.Get get = (Expr.Get) expr;
+            } else if (expr instanceof Expr.Get get) {
                 return new Expr.Set(get.object, get.name, value);
             }
 
@@ -396,7 +403,7 @@ public class Parser {
         if (match(NUMBER, STRING)) {
             return new Expr.Literal(previous().literal);
         }
-        
+
         if (match(SUPER)) {
             Token keyword = previous();
             consume(DOT, "Expect '.' after 'super'.");

@@ -23,6 +23,11 @@ class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
         METHOD
     }
 
+    private enum LoopType {
+        NONE,
+        WHILE,
+    }
+
     private enum ClassType {
         NONE,
         CLASS,
@@ -30,6 +35,7 @@ class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
     }
 
     private ClassType currentClass = ClassType.NONE;
+    private LoopType currentLoop = LoopType.NONE;
 
     @Override
     public Void visitBlockStmt(Stmt.Block stmt) {
@@ -199,6 +205,14 @@ class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
     }
 
     @Override
+    public Void visitBreakStmt(Stmt.Break stmt) {
+        if (currentLoop == LoopType.NONE) {
+            Lox.error(stmt.keyword, "Can't break when not in a loop");
+        }
+        return null;
+    }
+
+    @Override
     public Void visitPrintStmt(Stmt.Print stmt) {
         resolve(stmt.expression);
         return null;
@@ -222,8 +236,16 @@ class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
     @Override
     public Void visitWhileStmt(Stmt.While stmt) {
         resolve(stmt.condition);
-        resolve(stmt.body);
+        resolveWhile(stmt, currentLoop);
         return null;
+    }
+
+    private void resolveWhile(Stmt.While stmt, LoopType type) {
+        LoopType enclosingLoop = type;
+        currentLoop = LoopType.WHILE;
+
+        resolve(stmt.body);
+        currentLoop = enclosingLoop;
     }
 
     @Override
